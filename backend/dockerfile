@@ -1,0 +1,25 @@
+# Backend Dockerfile
+FROM python:3.9-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install system dependencies (needed for mysqlclient or psycopg2)
+RUN apt-get update \
+    && apt-get install -y gcc libpq-dev default-libmysqlclient-dev pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements.txt (make sure to create this file for your Python dependencies)
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of your backend application
+COPY . .
+
+# Expose the port Django runs on (default is 8000)
+EXPOSE 8000
+
+# Command to run the Django app (replace with Flask or FastAPI if needed)
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
