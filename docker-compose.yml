@@ -12,14 +12,23 @@ services:
       - app-network
 
   backend:
-    build:
-      context: ./backend  # Path to your backend directory
+    build: ./backend  # Path to your backend directory
+    volumes:
+      - ./backend:/app
     ports:
       - "8000:8000"  # Expose port 8000 (for Django or other Python apps)
     environment:
-      - DJANGO_SECRET_KEY=your_secret_key  # Replace with your Django secret key or other env vars
+      MYSQL_DATABASE: notesdb
+      MYSQL_USER: shankar
+      MYSQL_PASSWORD: makemusic
+      MYSQL_HOST: db
+      MYSQL_PORT: 3306  # Replace with your Django secret key or other env vars
     networks:
       - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python manage.py runserver 0.0.0.0:8000
 
   db:
       image: mysql:8
@@ -27,15 +36,20 @@ services:
       restart: always
       environment:
         MYSQL_DATABASE: notesdb
-        MYSQL_USER: notesuser
-        MYSQL_PASSWORD: notespass
-        MYSQL_ROOT_PASSWORD: rootpass
+        MYSQL_USER: shankar
+        MYSQL_PASSWORD: makemusic
+        MYSQL_ROOT_PASSWORD: makemusic
       ports:
         - "3307:3306"
       volumes:
         - db_data:/var/lib/mysql
       networks:
         - app-network
+      healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "shankar", "-pmakemusic"]
+        interval: 10s
+        retries: 5
+        timeout: 5s
 
 networks:
   app-network:

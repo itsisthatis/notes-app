@@ -67,11 +67,11 @@ WSGI_APPLICATION = "notes_api.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("MYSQL_DATABASE", "notesdb"),
-        "USER": os.getenv("MYSQL_USER", "root"),
-        "PASSWORD": os.getenv("MYSQL_PASSWORD", "makemusic"),
-        "HOST": os.getenv("MYSQL_HOST", "127.0.0.1"),  # "db" is the service name in docker-compose
-        "PORT": os.getenv("MYSQL_PORT", "3306"),
+        "NAME": "notesdb",
+        "USER": "root",
+        "PASSWORD": "makemusic",
+        "HOST": "db",
+        "PORT": "3306",
     }
 }
 
